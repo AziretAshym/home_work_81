@@ -19,7 +19,7 @@ linksRouter.post("/", async (req, res, next) => {
     const { originalLink } = req.body;
 
     if (!originalLink) {
-        res.status(400).send({ message: "Missing required field: originalLink" });
+        res.status(400).send({ message: "OriginalLink required!" });
     }
 
     const shortLink = generateShortUrl();
@@ -36,7 +36,18 @@ linksRouter.post("/", async (req, res, next) => {
 
 
 linksRouter.get("/:shortLink", async (req, res, next) => {
+    const { shortLink } = req.params;
 
+    try {
+        const link = await Link.findOne({ shortLink });
+        if (!link) {
+            res.status(404).send({ message: "Link not found" });
+        } else {
+            res.status(301).redirect(link.originalUrl);
+        }
+    } catch (error) {
+        next(error);
+    }
 });
 
 export default linksRouter;
