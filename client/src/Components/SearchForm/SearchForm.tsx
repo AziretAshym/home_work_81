@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axiosApi from '../../axiosApi.ts';
 import './SearchForm.css';
+import { toast } from 'react-toastify';
 
 const SearchForm = () => {
   const [originalUrl, setOriginalUrl] = useState('');
@@ -10,6 +11,7 @@ const SearchForm = () => {
     try {
       const response = await axiosApi.post('/urls', { originalLink: originalUrl });
       setShortUrl(`http://${response.data.shortLink}`);
+      toast.success("Your link shortened successfully!");
     } catch (error) {
       console.error(error);
     }
@@ -25,24 +27,26 @@ const SearchForm = () => {
   };
 
   return (
-    <div>
-      <h1>Shorten your link</h1>
-      <form onSubmit={handleShorten}>
+    <div className="searchFormContainer">
+      <h1 className="title">Shorten your link</h1>
+      <form className="form" onSubmit={handleShorten}>
         <input
           type="text"
+          className="input"
           placeholder="Enter URL here"
           value={originalUrl}
           onChange={(e) => setOriginalUrl(e.target.value)}
         />
-        <button type="submit">Shorten!</button>
+        <button className="button" type="submit">Shorten</button>
       </form>
       {shortUrl && (
-        <div>
-          <p>Your link now looks like this:</p>
-          <a href={originalUrl}>{shortUrl}</a>
+        <div className="result">
+          <p className="resultText">Your link now looks like this:</p>
+          <a className="shortenedLink" href={originalUrl} target="_blank" rel="noopener noreferrer">{shortUrl}</a>
         </div>
       )}
     </div>
+
   );
 };
 
